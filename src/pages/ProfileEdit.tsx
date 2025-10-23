@@ -1,9 +1,19 @@
 import React, { useState } from "react";
-import {View, StyleSheet, Alert, Text, ScrollView, TouchableOpacity} from "react-native";
-import Input from "../components/Input";
-import Button from "../components/Button";
+import {
+    View,
+    StyleSheet,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    Alert,
+    TextInput,
+    Image,
+    Dimensions
+} from "react-native";
 import { useProfile, profileSchema } from "../contexts/ProfileContext";
 import Avatar from "@/components/Avatar";
+
+const { width } = Dimensions.get("window");
 
 export default function ProfileEdit() {
     const { profileData, updateProfile } = useProfile();
@@ -22,141 +32,196 @@ export default function ProfileEdit() {
 
     return (
         <View style={styles.main}>
-            <Text style={styles.title}>Esse é o perfil que aparece para responsáveis ou ONGs que recebem sua mensagem.</Text>
-            <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.headerContainer}>
+                <Image
+                    source={require("../../assets/header.png")}
+                    style={styles.headerImage}
+                    resizeMode="cover"
+                />
+            </View>
+
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <Text style={styles.infoText}>
+                    Esse é o perfil que aparece para responsáveis ou ONGs que recebem sua mensagem.
+                </Text>
+
                 <View style={styles.card}>
-                    <Avatar uri={avatarUrl} size={120} />
+                    <Text style={styles.title}>Perfil</Text>
 
-                    <Text style={styles.title}>Nome: </Text>
-                    <Input label="Nome" value={form.name} onChangeText={(t:any)=>setForm({...form, name:t})} />
+                    <Avatar uri={form.avatarUrl} size={100} />
+                    <Text style={styles.editText}>Clique na foto para editar</Text>
 
-                    <Text style={styles.title}>Telefone: </Text>
-                    <Input label="Telefone" value={form.phone} onChangeText={(t:any)=>setForm({...form, phone:t})} />
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Nome</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={form.name}
+                            onChangeText={(t) => setForm({ ...form, name: t })}
+                            placeholder="Nome completo"
+                        />
+                    </View>
 
-                    <Text style={styles.title}>Cidade: </Text>
-                    <Input label="Cidade" value={form.city} onChangeText={(t:any)=>setForm({...form, city:t})} />
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Telefone</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={form.phone}
+                            onChangeText={(t) => setForm({ ...form, phone: t })}
+                            placeholder="55 11 XXXXXXXX"
+                        />
+                    </View>
 
-                    <Text style={styles.title}>Sobre: </Text>
-                    <Input label="Mensagem" value={form.message} multiline onChangeText={(t:any)=>setForm({...form, message:t})} />
-                    <TouchableOpacity
-                        style={styles.editButton}
-                        onPress={() => navigation.navigate("ProfileEdit" as any)}
-                    >
-                        <Text style={styles.editButtonText}>Editar</Text>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Cidade</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={form.city}
+                            onChangeText={(t) => setForm({ ...form, city: t })}
+                            placeholder="Cidade"
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Mensagem</Text>
+                        <TextInput
+                            style={[styles.input, styles.textArea]}
+                            multiline
+                            numberOfLines={4}
+                            value={form.message}
+                            onChangeText={(t) => setForm({ ...form, message: t })}
+                            placeholder="Escreva algo sobre você..."
+                        />
+                    </View>
+
+                    <TouchableOpacity style={styles.saveButton} onPress={onSave}>
+                        <Text style={styles.saveButtonText}>Salvar</Text>
                     </TouchableOpacity>
                 </View>
+
+                <View style={styles.footer}>
+                    <View style={styles.footerItem}>
+                        <Text style={styles.footerIcon}>💚</Text>
+                        <Text style={styles.footerText}>Pets para adoção</Text>
+                    </View>
+                    <View style={styles.footerItem}>
+                        <Text style={styles.footerIcon}>💬</Text>
+                        <Text style={styles.footerText}>Mensagens</Text>
+                    </View>
+                </View>
             </ScrollView>
-
-            <View style={styles.footer}>
-                <View style={styles.footerItem}>
-                    <View style={styles.footerIcon}>
-                        {/* Aqui você pode colocar um ícone de coração */}
-                    </View>
-                    <Text style={styles.footerText}>Pets para adoção</Text>
-                </View>
-                <View style={styles.footerItem}>
-                    <View style={styles.footerIcon}>
-                        {/* Aqui você pode colocar um ícone de mensagem */}
-                    </View>
-                    <Text style={styles.footerText}>Mensagens</Text>
-                </View>
-            </View>
         </View>
-
-);
+    );
 }
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     main: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#f8f8f8",
     },
-    container: {
+    headerContainer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        width: "100%",
+        zIndex: -1,
+    },
+    headerImage: {
+        width: width,
+        height: 180,
+    },
+    scrollContainer: {
         alignItems: "center",
         paddingHorizontal: 24,
-        paddingTop: 40,
-        paddingBottom: 100, // espaço para footer
+        paddingTop: 160,
+        paddingBottom: 80,
     },
-    avatar: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        marginBottom: 16,
-        borderWidth: 2,
-        borderColor: "#fff",
-    },
-    name: {
-        fontSize: 20,
-        fontWeight: "700",
-        marginBottom: 6,
-        textAlign: "center",
-    },
-    title: {
+    infoText: {
         fontSize: 14,
-        color: "#3b82f6", // azul parecido com link
-        marginBottom: 6,
+        color: "#1e3a8a",
         textAlign: "center",
-        fontWeight: "bold",
-    },
-    info: {
-        fontSize: 14,
-        marginTop: 12,
-        marginBottom: 24,
-        paddingHorizontal: 12,
-        textAlign: "center",
-        color: "#111827",
+        marginBottom: 20,
     },
     card: {
+        backgroundColor: "#fff",
         width: "100%",
-        backgroundColor: "#f6f6f6",
         borderRadius: 16,
-        padding: 20,
-        marginBottom: 24,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
+        padding: 24,
         alignItems: "center",
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 6,
+        elevation: 3,
     },
-    editButton: {
-        width: "100%",
-        paddingVertical: 16,
-        backgroundColor: "#ef476f",
-        borderRadius: 12,
-        marginTop: 16,
-    },
-    editButtonText: {
-        color: "#fff",
+    title: {
+        fontSize: 18,
         fontWeight: "700",
+        color: "#222",
+        marginBottom: 20,
+    },
+    editText: {
+        fontSize: 12,
+        color: "#ef476f",
+        marginTop: 6,
+        marginBottom: 20,
+    },
+    inputGroup: {
+        width: "100%",
+        marginBottom: 16,
+    },
+    label: {
+        fontSize: 14,
+        color: "#444",
+        marginBottom: 4,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        fontSize: 14,
+        color: "#333",
+        backgroundColor: "#fff",
+    },
+    textArea: {
+        textAlignVertical: "top",
+    },
+    saveButton: {
+        backgroundColor: "#ef476f",
+        borderRadius: 10,
+        width: "100%",
+        paddingVertical: 14,
+        marginTop: 10,
+    },
+    saveButtonText: {
+        color: "#fff",
         textAlign: "center",
+        fontWeight: "bold",
         fontSize: 16,
     },
     footer: {
-        position: "absolute",
-        bottom: 0,
-        width: "auto",
         flexDirection: "row",
         justifyContent: "space-around",
-        paddingVertical: 16,
-        backgroundColor: "#e0f7f1",
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16,
+        width: "100%",
+        marginTop: 30,
     },
     footerItem: {
         alignItems: "center",
     },
     footerIcon: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: "#d1f0eb",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 4,
+        fontSize: 20,
+        marginBottom: 6,
     },
     footerText: {
         fontSize: 12,
-        color: "#111827",
+        color: "#333",
+    },
+    footerNote: {
+        fontSize: 11,
+        color: "#008f84",
+        marginTop: 16,
+        textAlign: "center",
     },
 });
